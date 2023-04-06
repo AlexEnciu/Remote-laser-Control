@@ -13,26 +13,26 @@ recipe->[Commant] [Target Motor Nr] [Value if is the case]
   Homing X
   ex: Homing 0
   
-4. Enable Motor
+4. Enable Motor:
   Enable X
   ex: Enable 0
   
-5. Disable Motor
+5. Disable Motor:
   Disable X
   ex: Disable 0
   
-6. Set the rotation direction
+6. Set the rotation direction:
   Direction X YY [CW (clockwise), CCW (counter clockwise)]
   ex: Direction 0 CW
 
-7. Read the status of the Motor
+7. Read the status of the Motor:
   ReadState X
   ex: ReadState 0 -> answear: ENABLE,CW
 
-8. Read the absolute value stored in the counter
+8. Read the absolute value stored in the counter:
   ReadAbs X
   ex: ReadAbs 0
   
-9. Set the rotation speed
+9. Set the rotation speed:
   SetSpeed X YYYYY
   ex: SetSpeed 0 0.005 -> lower=faster
