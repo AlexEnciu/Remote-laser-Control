@@ -33,15 +33,25 @@ class Stepper(object):
 
 	def homing(self):
 		self.enable()
+		if gpio.input(self.enable_pin)==1:
+			return "Motor DISABLE"
 		self.setDirection("CLOCKWISE")
+		print("Looking for SW")
 		while gpio.input(self.sw_pin)==1:
 			gpio.output(self.step_pin,1)
 			sleep(0.0005)
 			gpio.output(self.step_pin,0)
 			sleep(0.0005)
 		self.setDirection("COUNTER CLOCKWISE")
-		self.move_relative(200)
+		print("Reverse direction...")
+		for i in range(250):
+			#self.positionCounter()
+			gpio.output(self.step_pin,1)
+			sleep(0.0005)
+			gpio.output(self.step_pin,0)
+			sleep(0.0005)
 		self.setDirection("CLOCKWISE")
+		print("Aproching slowly...")
 		while gpio.input(self.sw_pin)==1:
 			gpio.output(self.step_pin,1)
 			sleep(0.001)
@@ -49,6 +59,7 @@ class Stepper(object):
 			sleep(0.001)
 		self.disable()
 		self.counter=0
+		return "Homing Done!"
 
 	def setDirection(self,state):
 		if state=="CLOCKWISE":
@@ -62,8 +73,13 @@ class Stepper(object):
 	def enable(self):
 		gpio.output(self.enable_pin,0)
 
-	def readPosition(self):
-		return self.counter
+	def readCounter(self):
+		counter_=self.counter
+		if counter_ is None:
+			return "Counter Err!"
+		elif counter_ is not None:
+			return str(counter_)
+		return "Err"
 
 	def readState(self):
 		if gpio.input(self.enable_pin)==0:
@@ -71,12 +87,23 @@ class Stepper(object):
 		elif gpio.input(self.enable_pin)==1:
 			enableState="DISABLE"
 		if gpio.input(self.dir_pin)==0:
-			dirState="CLOCKWISE"
+			dirState="CW"
 		elif gpio.input(self.dir_pin)==1:
-			dirState="COUNTER CLOCKWISE"
-		return enableState,dirState
+			dirState="CCW"
+		return "State:"+enableState+","+"Direction:"+dirState
 
 	def move_relative(self,step_nr):
+		if gpio.input(self.enable_pin)==1:
+			return "Motor DISABLE"
+		for i in range(step_nr):
+			self.positionCounter()
+			gpio.output(self.step_pin,1)
+			sleep(self.speed)
+			gpio.output(self.step_pin,0)
+			sleep(self.speed)
+		return "\r"
+
+	def move_relative_accel(self,step_nr):
 		#calculate ramp
 		if gpio.input(self.enable_pin)==1:
 			return "Motor DISABLE"
