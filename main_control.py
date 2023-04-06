@@ -97,6 +97,19 @@ def control_stepper(command):
 		elif target == '1':
 			motor1.move_relative(speed)
 			return "ok"
+	if function =='MoveToAbs': # move the motor with a relative number of steps
+		steps=int(parts[2])
+		if target == '0':
+			motor0.enable()
+			msg=motor0.move_toAbs(steps)
+			motor0.disable()
+			return msg
+		elif target == '1':
+			motor1.enable()
+			msg=motor1.move_toAbs(steps)
+			motor1.disable()
+			return msg
+
 
 # Create a TCP/IP socket
 server_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)

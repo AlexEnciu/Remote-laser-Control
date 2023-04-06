@@ -25,9 +25,9 @@ class Stepper(object):
 		return print("Speed value ", self.speed," has been selected")
 
 	def positionCounter(self):
-		if gpio.input(self.dir_pin)==0:
+		if gpio.input(self.dir_pin)==1:
 			self.counter += 1
-		elif gpio.input(self.dir_pin)==1:
+		elif gpio.input(self.dir_pin)==0:
 			self.counter -= 1
 		return print(f"\rAbsPosition= {self.counter}",end="")
 
@@ -91,6 +91,16 @@ class Stepper(object):
 		elif gpio.input(self.dir_pin)==1:
 			dirState="CCW"
 		return "State:"+enableState+","+"Direction:"+dirState
+	def move_toAbs(self,abs_value):
+		if abs_value > self.counter:
+			gpio.output(self.dir_pin,1)
+			self.move_relative(abs_value-self.counter)
+			return str(self.counter)
+		elif abs_value < self.counter:
+			gpio.output(self.dir_pin,0)
+			self.move_relative(self.counter-abs_value)
+			return str(self.counter)
+
 
 	def move_relative(self,step_nr):
 		if gpio.input(self.enable_pin)==1:
