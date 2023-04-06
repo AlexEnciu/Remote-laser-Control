@@ -26,24 +26,31 @@ motor1=Stepper(step_pin_1,dir_pin_1,enable_pin_1,sw_pin_1)
 
 
 def control_stepper(command):
-	parts = command.split() #split command in 3 [command->target->value]
-	function=parts[0] # function which you want to call
-	target=parts[1] # the motor where you want to apply the function
-	value=parts[2] #  value of the function int/str/bool
-
-	if function=='Move':
-		steps=int(value)
-		if target == '0':
+	# Split the received command using the space character as the separator
+	parts = command.split()
+    	# Extract the motor number and the number of steps from the command
+	motor_number = parts[0][-1]  # Assumes the motor number is the last character of the first part
+	steps = int(parts[1])
+			
+	if command == 'Homing M1':
+        # Code to move the stepper motors to the left
+		motor1.homing()
+	elif command == 'Homing M0':
+        # Code to move the stepper motors to the right
+		motor0.homing()
+	elif command == 'stop':
+		pass
+	elif command.startswith('MoveM'):
+		if motor_number == '0':
+            # Code to move motor 0 by the specified number of steps
 			motor0.enable()
 			motor0.move_relative(steps)
 			motor0.disable()
-			return "ok"
-		elif target == '1':
+		elif motor_number == '1':
+            # Code to move motor 1 by the specified number of steps
 			motor1.enable()
 			motor1.move_relative(steps)
 			motor1.disable()
-			return "ok"
-
 
 # Create a TCP/IP socket
 server_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
